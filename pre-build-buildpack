@@ -19,6 +19,9 @@ sleep 2 # wait so that docker run has not exited before docker attach
 EOF
 )
 
+# wait the container start-up
+sleep 2
+
 id=$(docker run -d $IMAGE /bin/bash -e -c "$COMMAND")
 #enable logs
 docker attach $id
