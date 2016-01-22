@@ -2,10 +2,27 @@
 
 set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 
-APP="$1"
+APP="$1"; IMAGE="dokku/$APP"
+DIR=/app
 
-HOOKS_PATH="deploy/post-deploy"
+HOOKS_PATH="deploy-hooks/post-deploy"
+
+COMMAND=$(cat <<EOF
+
+if [ -f $DIR/HOOKS_PATH ]; then
+	echo "-----> post-deploy hooks found"
+    /bin/bash -c <<< cat deploy/post-deploy
+fi
+EOF
+sleep 1 # wait so that docker run has not exited before docker attach
+)
 
 echo "-----> Running post-deploy hooks"
-. $(dirname "$0")/functions
-execute_hooks $HOOKS_PATH
+
+if [ -f $DIR/HOOKS_PATH ]; then
+	id=$(docker run -d $IMAGE /bin/bash -e -c "$COMMAND")
+
+	docker attach $id
+	test $(docker wait $id) -eq 0
+	docker commit $id $IMAGE > /dev/null
+fi
