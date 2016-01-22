@@ -15,7 +15,7 @@ if [ -f $DIR/$HOOKS_PATH ]; then
 	echo "-----> pre-deploy hook found"
     /bin/bash -c <<< cat $DIR/$HOOKS_PATH
 fi
-sleep 1 # wait so that docker run has not exited before docker attach
+sleep 2 # wait so that docker run has not exited before docker attach
 EOF
 )
 
