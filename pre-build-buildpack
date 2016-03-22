@@ -7,7 +7,7 @@ echo "-----> Running pre-build-buildpack hooks"
 
 DIR=/app
 
-HOOKS_PATH="deploy-hooks/pre-build-buildpack"
+HOOKS_PATH="deploy/pre-build-buildpack"
 
 COMMAND=$(cat <<EOF
 
@@ -18,9 +18,6 @@ fi
 sleep 2 # wait so that docker run has not exited before docker attach
 EOF
 )
-
-# wait the container start-up
-sleep 2
 
 id=$(docker run -d $IMAGE /bin/bash -e -c "$COMMAND")
 #enable logs
